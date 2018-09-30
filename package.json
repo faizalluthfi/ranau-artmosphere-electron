@@ -34,6 +34,7 @@
     "targz": "^1.0.1"
   },
   "devDependencies": {
+    "@types/es6-collections": "^0.5.31",
     "electron": "^3.0.2",
     "typescript": "^3.1.1"
   }
