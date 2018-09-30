@@ -66,6 +66,7 @@
   "devDependencies": {
     "@types/es6-collections": "^0.5.31",
     "electron": "^3.0.2",
+    "electron-reload": "^1.2.5",
     "typescript": "^3.1.1"
   }
 }
