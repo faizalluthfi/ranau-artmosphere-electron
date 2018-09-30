@@ -4,6 +4,10 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    "start": "npx electron .",
+    "watch": "npx tsc -w main.ts",
+    "build": "npx tsc main.ts && npx electron-builder -w --x64 --ia32",
+    "postinstall": "npx electron-builder install-app-deps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +19,21 @@
   "bugs": {
     "url": "https://gitlab.com/artmosphere/electron/issues"
   },
-  "homepage": "https://gitlab.com/artmosphere/electron#README"
+  "homepage": "https://gitlab.com/artmosphere/electron#README",
+  "dependencies": {
+    "bookshelf": "^0.13.3",
+    "electron-is-dev": "^1.0.1",
+    "electron-log": "^2.2.17",
+    "electron-updater": "^3.1.2",
+    "env-paths": "^1.0.0",
+    "knex": "^0.15.2",
+    "node-thermal-printer": "^2.0.0",
+    "rmdir": "^1.2.0",
+    "sqlite3": "^4.0.2",
+    "targz": "^1.0.1"
+  },
+  "devDependencies": {
+    "electron": "^3.0.2",
+    "typescript": "^3.1.1"
+  }
 }

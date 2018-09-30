@@ -1,0 +1,34 @@
+build:
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  image: electronuserland/builder:wine
+  stage: build
+  script:
+    - cd angular
+    - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
+    - npm install
+    - npx ng build --prod --output-path ../html --base-href ./index.html
+    - cd ..
+    - npm install
+    - npm run build
+    - npx electron-builder -l --x64
+    - ls -la dist/
+    - rm -rf dist/*unpacked
+  artifacts:
+    paths:
+       - dist/
+  only:
+    - master
+
+pages:
+  image: alpine:latest
+  stage: deploy
+  script:
+    - mv dist public
+  dependencies:
+    - build
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
