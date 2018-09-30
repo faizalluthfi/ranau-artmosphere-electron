@@ -10,6 +10,36 @@
     "postinstall": "npx electron-builder install-app-deps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "build": {
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://kecamatan-lowokwaru.gitlab.io/electron/"
+      }
+    ],
+    "appId": "com.faizalluthfi.kecamatan-lowokwaru",
+    "files": [
+      "**/*",
+      "!dev-app-update.yml",
+      "!angular"
+    ],
+    "appImage": {
+      "artifactName": "${name}.${ext}"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage"
+        }
+      ],
+      "icon": "assets/icons/png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icons/icon.ico",
+      "artifactName": "${name}_setup_${version}.${ext}"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/artmosphere/electron.git"
