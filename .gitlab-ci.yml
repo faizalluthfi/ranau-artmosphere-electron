@@ -4,6 +4,7 @@ build:
   image: electronuserland/builder:wine
   stage: build
   script:
+    - node -v
     - cd angular
     - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
     - npm install
