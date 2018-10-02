@@ -13,7 +13,6 @@ build:
     - npm i --save-dev node@10.1.0
     - npx node -v
     - npm install
-    - npm i --save-dev @types/node@8.10.30
     - npm run build
     - npx electron-builder -l --x64
     - ls -la dist/
