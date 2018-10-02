@@ -3,4 +3,6 @@ package-lock.json
 dist/*
 !dist/index.html
 *.js
+!knexfile.js
+!migrations/*.js
 html
