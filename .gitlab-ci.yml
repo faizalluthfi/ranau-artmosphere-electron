@@ -10,8 +10,10 @@ build:
     - npm install
     - npx ng build --prod --output-path ../html --base-href ./index.html
     - cd ..
-    - npm i --save-dev node@8.11.4
+    - npm i --save-dev node@10.1.0
     - npx node -v
+    - npm install
+    - rm -rf node_modules
     - npm install
     - npm run build
     - npx electron-builder -l --x64
