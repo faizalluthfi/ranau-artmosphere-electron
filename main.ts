@@ -5,6 +5,8 @@ import * as isDev from 'electron-is-dev';
 import { autoUpdater } from 'electron-updater';
 import * as log from 'electron-log';
 import * as AutoLaunch from 'auto-launch';
+import * as fs from 'fs';
+
 let packageJson = require('./package.json');
 
 let iconPath = path.join(__dirname, 'assets', 'icons', 'png', '256x256.png');
@@ -16,6 +18,26 @@ console.log(`App path is ${app.getAppPath()}`);
 
 autoUpdater.logger = log;
 autoUpdater.logger['transports'].file.level = 'info';
+
+let configdir  = app.getPath('appData');
+
+let mkdir = dir => {
+  if(fs.existsSync(dir)) {
+    fs.stat(dir, (err, stats) => {
+      if(stats.isFile()) app.quit();
+    });
+  } else {
+    fs.mkdirSync(dir);
+  }
+}
+const dbfile   = 'db.sqlite3';
+const subpaths = ['com', 'faizalluthfi', 'artmosphere' + (isDev ? '.development' : '')];
+subpaths.forEach(p => {
+  configdir = path.join(configdir, p);
+  mkdir(configdir);
+});
+const dbpath = path.join(configdir, dbfile);
+
 
 const loadApp = () => {
   win.loadURL(url.format({
@@ -162,6 +184,8 @@ let createBrowserWindow = () => {
   });
   global['app'] = app;
   global['win'] = win;
+  global['appdir'] = __dirname;
+  global['dbpath'] = dbpath;
 
   win.once('ready-to-show', () => {
     win.show();
