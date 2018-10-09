@@ -236,3 +236,7 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+app.on('before-quit', () => {
+  tray.destroy();
+});
