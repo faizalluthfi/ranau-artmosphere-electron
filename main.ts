@@ -6,6 +6,9 @@ import { autoUpdater } from 'electron-updater';
 import * as log from 'electron-log';
 import * as AutoLaunch from 'auto-launch';
 import * as fs from 'fs';
+import * as knex from 'knex';
+
+const appdir = __dirname;
 
 let packageJson = require('./package.json');
 
@@ -138,6 +141,27 @@ let setTrayMenu = (enableHideMenuItem = true) => {
   ]));
 }
 
+const knexConfig = {
+  client: 'sqlite3',
+  connection: {
+    filename: dbpath
+  },
+  migrations: {
+    directory: path.join(appdir, 'migrations')
+  },
+  seeds: {
+    directory: path.join(appdir, 'seeds')
+  },
+  useNullAsDefault: true
+};
+
+let migrateDatabase = () => {
+  knex(knexConfig).migrate.latest()
+    .then(function() {
+      createWindow();
+    });
+};
+
 let createWindow = () => {
   // Create the browser window.
   createBrowserWindow();
@@ -184,8 +208,9 @@ let createBrowserWindow = () => {
   });
   global['app'] = app;
   global['win'] = win;
-  global['appdir'] = __dirname;
+  global['appdir'] = appdir;
   global['dbpath'] = dbpath;
+  global['knexConfig'] = knexConfig;
 
   win.once('ready-to-show', () => {
     win.show();
@@ -218,7 +243,7 @@ let createBrowserWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', migrateDatabase);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
