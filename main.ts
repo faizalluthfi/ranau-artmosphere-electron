@@ -7,6 +7,7 @@ import * as log from 'electron-log';
 import * as AutoLaunch from 'auto-launch';
 import * as fs from 'fs';
 import * as knex from 'knex';
+import * as printer from 'node-thermal-printer';
 
 const appdir = __dirname;
 
@@ -21,6 +22,55 @@ console.log(`App path is ${app.getAppPath()}`);
 
 autoUpdater.logger = log;
 autoUpdater.logger['transports'].file.level = 'info';
+
+let printerPort;
+
+printer.init({
+  type: 'epson'
+});
+
+let initPrinter = port => {
+  if(port != printerPort) {
+    printerPort = port;
+    printer.init({
+      interface: port
+    });
+  }
+};
+
+let printNote = note => {
+  printer.println(note);
+  printer.cut();
+  if(printerPort) {
+    printer.execute(err => {
+      if(err) {
+        console.error('Print failed', err);
+      } else {
+        win.webContents.send('print-success');
+        console.log('Print done');
+      }
+    });
+  } else {
+    win.webContents.send('no-printer-port');
+  }
+};
+
+ipcMain.on( 'init-printer', ( e, arg ) => {
+  initPrinter(arg);
+});
+
+ipcMain.on( 'test-printer', ( e, arg ) => {
+  let oldPort = printerPort;
+  initPrinter(arg.printerPath);
+  if(arg.test) {
+    printNote(arg.test);
+  }
+  initPrinter(oldPort);
+});
+
+ipcMain.on( 'print-note', ( e, arg ) => {
+  printNote(arg);
+});
 
 let configdir  = app.getPath('appData');
 
