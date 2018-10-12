@@ -7,6 +7,7 @@ exports.up = function(knex, Promise) {
     table.increments();
     table.integer('transaction_id').references('transactions.id');
     table.integer('service_id');
+    table.boolean('deleted');
     table.integer('nominal');
   });
 };
