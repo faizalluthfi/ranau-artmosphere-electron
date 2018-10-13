@@ -4,4 +4,5 @@ dist/*
 *.js
 !knexfile.js
 !migrations/*.js
+!seeds/*.js
 html
