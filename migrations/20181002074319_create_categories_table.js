@@ -9,6 +9,7 @@ exports.up = function(knex, Promise) {
     table.string('name');
     table.integer('price');
     table.boolean('deleted');
+    table.string('note');
     table.integer('category_id').references('categories.id');
   });
 };

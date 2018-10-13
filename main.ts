@@ -206,8 +206,10 @@ const knexConfig = {
 };
 
 let migrateDatabase = () => {
-  knex(knexConfig).migrate.latest()
+  let k = knex(knexConfig);
+  k.migrate.latest()
     .then(function() {
+      k.seed.run();
       createWindow();
     });
 };
