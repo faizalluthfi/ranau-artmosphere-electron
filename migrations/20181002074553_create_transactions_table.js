@@ -2,6 +2,7 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('transactions', function(table) {
     table.increments();
+    table.integer('total');
     table.integer('created_at');
   }).createTable('transaction_items', function(table) {
     table.increments();
