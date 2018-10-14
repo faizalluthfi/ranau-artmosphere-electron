@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu, ipcMain} from 'electron';
+import { app, BrowserWindow, Tray, Menu, ipcMain, dialog, shell} from 'electron';
 import * as url from 'url';
 import * as path from 'path';
 import * as isDev from 'electron-is-dev';
@@ -70,6 +70,37 @@ ipcMain.on( 'test-printer', ( e, arg ) => {
 
 ipcMain.on( 'print-note', ( e, arg ) => {
   printNote(arg);
+});
+
+ipcMain.on('print-to-pdf', function (event, args) {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  dialog.showSaveDialog(win, {
+    title: 'Save PDF',
+    filters: [
+      {
+        name: `PDF (*.pdf)`,
+        extensions: ['pdf']
+      }
+    ]
+  }, filename => {
+    if(filename) {
+      // Use default printing options
+      win.webContents.printToPDF(args || {}, function (error, data) {
+        if (error) {
+          throw error;
+        }
+        fs.writeFile(filename, data, function (error) {
+          if (error) {
+            throw error;
+          }
+          shell.openExternal('file://' + filename);
+          win.webContents.send('print-to-pdf-success');
+        })
+      })
+    } else {
+      win.webContents.send('print-to-pdf-success');
+    }
+  });
 });
 
 let configdir  = app.getPath('appData');
