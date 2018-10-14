@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content='IE=edge' http-equiv='X-UA-Compatible'>
+    <meta content='width=device-width, initial-scale=1' name='viewport'>
+    <title>LAZIS Miftahul Jannah</title>
+</head>
+<body>
+    <app>
+      <style>
+        app {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+
+          text-transform: uppercase;
+          font-family: -apple-system,
+              BlinkMacSystemFont,
+              "Segoe UI",
+              Roboto,
+              Oxygen-Sans,
+              Ubuntu,
+              Cantarell,
+              Helvetica,
+              sans-serif;
+          font-size: 2.5em;
+          -webkit-user-select: none;
+          -webkit-app-region: drag;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+        }
+
+        @keyframes dots {
+          50% {
+            transform: translateY(-.4rem);
+          }
+          100% {
+            transform: translateY(0);
+          }
+        }
+
+        .d {
+          animation: dots 1.5s ease-out infinite;
+        }
+        .d-2 {
+          animation-delay: .5s;
+        }
+        .d-3 {
+          animation-delay: 1s;
+        }
+      </style>
+      Restoring data<span class="d">.</span><span class="d d-2">.</span><span class="d d-3">.</span>
+    </app>
+</body>
+</html>

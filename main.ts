@@ -8,8 +8,12 @@ import * as AutoLaunch from 'auto-launch';
 import * as fs from 'fs';
 import * as knex from 'knex';
 import * as printer from 'node-thermal-printer';
+import * as targz from 'targz';
+import * as rmdir from 'rmdir';
 
 const appdir = __dirname;
+
+const backupExtension = 'artmosphere.backup';
 
 let packageJson = require('./package.json');
 
@@ -123,12 +127,14 @@ subpaths.forEach(p => {
 const dbpath = path.join(configdir, dbfile);
 
 
+const toLoad = url.format({
+  pathname: isDev ? 'localhost:4200' : path.join(__dirname, 'html', 'index.html'),
+  protocol: `${isDev ? 'http' : 'file'}:`,
+  slashes: true
+});
+
 const loadApp = () => {
-  win.loadURL(url.format({
-    pathname: isDev ? 'localhost:4200' : path.join(__dirname, 'html', 'index.html'),
-    protocol: `${isDev ? 'http' : 'file'}:`,
-    slashes: true
-  }));
+  win.loadURL(toLoad);
 }
 
 if(isDev) {
@@ -245,6 +251,49 @@ let migrateDatabase = () => {
     });
 };
 
+let backupData = (file) => {
+  targz.compress({
+    src: configdir,
+    dest: file
+  }, err => {
+    if(err) {
+      win.webContents.send('error', 'Backup failed.');
+      console.log(err);
+    } else {
+      win.webContents.send('backup-succeed', file);
+      console.log('Backup succeed.');
+    }
+  });
+};
+
+let restoreData = file => {
+  if(!fs.existsSync(file)) {
+    win.webContents.send('error', 'File does not exist.');
+  } else if(fs.lstatSync(file).isDirectory()) {
+    win.webContents.send('error', 'The selected is a folder.');
+  } else {
+    win.loadURL(url.format({
+      pathname: path.join(__dirname, 'restoring.html'),
+      protocol: 'file:',
+      slashes: true
+    }));
+    rmdir(configdir, (err, dirs, files) => {
+      mkdir(configdir);
+      targz.decompress({
+        src: file,
+        dest: configdir
+      }, err => {
+        if(err) {
+          console.log(err);
+        } else {
+          console.log('Restore done.');
+          win.loadURL(toLoad);
+        }
+      });
+    });
+  }
+};
+
 let createWindow = () => {
   // Create the browser window.
   createBrowserWindow();
@@ -264,6 +313,14 @@ let createWindow = () => {
   ipcMain.on('quit-application', (e, arg) => {
     app['isQuiting'] = true;
     app.quit();
+  });
+
+  // On backup and restore
+  ipcMain.on( 'backup', ( e, options ) => {
+    backupData(options);
+  });
+  ipcMain.on('restore', (e, file) => {
+    restoreData(file);
   });
 
   // Open the DevTools if the current environment is development.
@@ -292,6 +349,8 @@ let createBrowserWindow = () => {
   global['app'] = app;
   global['win'] = win;
   global['appdir'] = appdir;
+  global['backupExtension'] = backupExtension;
+  global['dialog'] = dialog;
   global['dbpath'] = dbpath;
   global['knexConfig'] = knexConfig;
 
