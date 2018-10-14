@@ -15,7 +15,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://kecamatan-lowokwaru.gitlab.io/electron/"
+        "url": "https://artmosphere.gitlab.io/electron/"
       }
     ],
     "appId": "com.faizalluthfi.kecamatan-lowokwaru",
