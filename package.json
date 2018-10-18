@@ -7,7 +7,8 @@
   "scripts": {
     "start": "npx electron .",
     "watch": "npx tsc -w main.ts",
-    "build": "npx tsc main.ts && npx electron-builder -w --ia32",
+    "build": "npx tsc main.ts && npx electron-builder -l --x64",
+    "buildforwindows": "npx tsc main.ts && npx electron-builder -w --ia32",
     "postinstall": "npx electron-builder install-app-deps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
