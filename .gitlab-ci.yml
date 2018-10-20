@@ -3,6 +3,8 @@ build:
     GIT_SUBMODULE_STRATEGY: recursive
   image: electronuserland/builder:wine
   stage: build
+  tags:
+    - docker
   script:
     - node -v
     - cd angular
@@ -16,6 +18,35 @@ build:
     - npm run build
     - ls -la dist/
     - rm -rf dist/*unpacked
+    - mv dist dist-linux
+  artifacts:
+    paths:
+       - dist-linux/
+  only:
+    - master
+buildforwindows:
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  image: electronuserland/builder:wine
+  stage: build
+  tags:
+    - windows
+  script:
+    - node -v
+    - cd angular
+    - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
+    - npm install
+    - npx ng build --prod --output-path ../html --base-href ./index.html
+    - cd ..
+    - npm i --save-dev node@10.1.0
+    - npx node -v
+    - npm install
+    - npm run buildforwindows
+    - ls -la dist/
+    - rm -rf dist/*unpacked
+    - mv dist-linux/* dist/
+  dependencies:
+    - build
   artifacts:
     paths:
        - dist/
@@ -23,12 +54,11 @@ build:
     - master
 
 pages:
-  image: alpine:latest
   stage: deploy
   script:
     - mv dist public
   dependencies:
-    - build
+    - buildforwindows
   artifacts:
     paths:
       - public
