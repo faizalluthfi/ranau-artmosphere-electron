@@ -32,13 +32,17 @@ buildforwindows:
   tags:
     - windows
   script:
+    - PATH=$PATH:/cygdrive/c/Program Files/nodejs/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin
+    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm
+    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/.bin
+    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/windows-build-tools/node_modules/.bin
+    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/.windows-build-tools/python27
     - node -v
     - cd angular
     - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
     - npm install
     - npx ng build --prod --output-path ../html --base-href ./index.html
     - cd ..
-    - npm i --save-dev node@10.1.0
     - npx node -v
     - npm install
     - npm run buildforwindows
