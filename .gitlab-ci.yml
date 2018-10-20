@@ -32,7 +32,7 @@ buildforwindows:
   tags:
     - windows
   script:
-    - PATH=$PATH:/cygdrive/c/Program Files/nodejs/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin
+    - PATH=$PATH:/cygdrive/c/Program\ Files/nodejs/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/.bin
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/windows-build-tools/node_modules/.bin
