@@ -353,6 +353,7 @@ let createBrowserWindow = () => {
   global['dialog'] = dialog;
   global['dbpath'] = dbpath;
   global['knexConfig'] = knexConfig;
+  global['packageJson'] = packageJson;
 
   win.once('ready-to-show', () => {
     win.show();
