@@ -6,7 +6,7 @@ stages:
 html:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  image: node/latest
+  image: node:latest
   stage: prepare
   tags:
     - docker
