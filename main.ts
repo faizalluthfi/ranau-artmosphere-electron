@@ -7,9 +7,11 @@ import * as log from 'electron-log';
 import * as AutoLaunch from 'auto-launch';
 import * as fs from 'fs';
 import * as knex from 'knex';
+
 import * as printer from 'node-thermal-printer';
 import * as targz from 'targz';
 import * as rmdir from 'rmdir';
+import * as excel from 'node-excel-export';
 
 const appdir = __dirname;
 
@@ -306,6 +308,29 @@ let createWindow = () => {
 
   // and load the index.html of the app.
   loadApp();
+
+  ipcMain.on('export-to-excel', (e, args) => {
+    const win = BrowserWindow.fromWebContents(e.sender)
+    dialog.showSaveDialog(win, {
+      title: 'Ekspor ke Excel',
+      filters: [
+        {
+          name: `Microsoft Excel (*.xlsx)`,
+          extensions: ['xlsx']
+        }
+      ]
+    }, filename => {
+      if(filename) {
+        const excelExport = excel.buildExport([
+          JSON.parse(args)
+        ]);
+        fs.writeFile(filename, excelExport, err => {
+          if (err) throw err;
+          else shell.openExternal('file://' + filename);
+        });
+      }
+    });
+  });
 
   ipcMain.on('show-application', (e, arg) => {
     showApplication();
