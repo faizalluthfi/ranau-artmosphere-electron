@@ -1,8 +1,13 @@
-build:
+stages:
+  - prepare
+  - build
+  - deploy
+
+html:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  image: electronuserland/builder:wine
-  stage: build
+  image: node/latest
+  stage: prepare
   tags:
     - docker
   script:
@@ -11,7 +16,21 @@ build:
     - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
     - npm install
     - npx ng build --prod --output-path ../html --base-href ./index.html
-    - cd ..
+  artifacts:
+    paths:
+       - html/
+  only:
+    - master
+
+build:
+  image: electronuserland/builder:wine
+  stage: build
+  dependencies:
+    - html
+  tags:
+    - docker
+  script:
+    - node -v
     - npm i --save-dev node@10.1.0
     - npx node -v
     - npm install
@@ -25,10 +44,14 @@ build:
   only:
     - master
 buildforwindows:
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
   image: electronuserland/builder:wine
+  cache:
+    key: "$CI_JOB_ID"
+    paths:
+      - node_modules/
   stage: build
+  dependencies:
+    - html
   tags:
     - windows
   script:
@@ -38,12 +61,6 @@ buildforwindows:
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/windows-build-tools/node_modules/.bin
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/.windows-build-tools/python27
     - node -v
-    - cd angular
-    - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
-    - npm install
-    - npx ng build --prod --output-path ../html --base-href ./index.html
-    - cd ..
-    - npx node -v
     - npm install
     - npm run buildforwindows
     - ls -la dist/
