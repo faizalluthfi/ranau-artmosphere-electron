@@ -23,7 +23,8 @@
     "files": [
       "**/*",
       "!dev-app-update.yml",
-      "!angular"
+      "!angular",
+      "!/logo.png"
     ],
     "appImage": {
       "artifactName": "${name}.${ext}"
