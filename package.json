@@ -1,7 +1,7 @@
 {
   "name": "artmosphere",
   "productName": "ArtMosphere",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -58,20 +58,19 @@
     "bookshelf": "^0.13.3",
     "electron-is-dev": "^1.0.1",
     "electron-log": "^2.2.17",
-    "electron-updater": "^3.1.2",
-    "env-paths": "^1.0.0",
+    "electron-updater": "^3.2.2",
+    "env-paths": "^2.0.0",
     "knex": "^0.15.2",
     "node-excel-export": "^1.4.4",
     "node-thermal-printer": "^2.0.0",
     "rmdir": "^1.2.0",
-    "sqlite3": "^4.0.2",
+    "sqlite3": "^4.0.3",
     "targz": "^1.0.1"
   },
   "devDependencies": {
     "@types/es6-collections": "^0.5.31",
-    "electron": "^3.0.3",
+    "electron": "^3.0.8",
     "electron-reload": "^1.2.5",
-    "node": "^10.1.0",
-    "typescript": "^3.1.1"
+    "typescript": "^3.1.6"
   }
 }
