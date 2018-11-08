@@ -331,6 +331,10 @@ let createWindow = () => {
     app['isQuiting'] = true;
     app.quit();
   });
+  ipcMain.on('apply-update', (e, arg) => {
+    app['isQuiting'] = true;
+    autoUpdater.quitAndInstall();
+  });
 
   // On backup and restore
   ipcMain.on( 'backup', ( e, options ) => {
