@@ -15,7 +15,7 @@ html:
     - cd angular
     - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
     - npm install
-    - npx ng build --prod --output-path ../html --base-href ./index.html
+    - npx ng build --prod --output-path ../html
   artifacts:
     paths:
        - html/
