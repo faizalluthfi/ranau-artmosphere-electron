@@ -1,11 +1,7 @@
 {
   "name": "artmosphere",
   "productName": "ArtMosphere",
-<<<<<<< HEAD
   "version": "0.0.10",
-=======
-  "version": "0.0.9",
->>>>>>> cf4a059b67b48d09697bc339a0330a37bc1f06ac
   "description": "",
   "main": "main.js",
   "scripts": {
