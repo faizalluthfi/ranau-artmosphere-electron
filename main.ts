@@ -129,14 +129,10 @@ subpaths.forEach(p => {
 const dbpath = path.join(configdir, dbfile);
 
 
-const toLoad = url.format({
-  pathname: isDev ? 'localhost:4200' : path.join(__dirname, 'html', 'index.html'),
-  protocol: `${isDev ? 'http' : 'file'}:`,
-  slashes: true
-});
+const pathname = path.join(__dirname, 'html', 'index.html');
 
 const loadApp = () => {
-  win.loadURL(toLoad);
+  win.loadFile(pathname);
 }
 
 if(isDev) {
@@ -274,11 +270,7 @@ let restoreData = file => {
   } else if(fs.lstatSync(file).isDirectory()) {
     win.webContents.send('error', 'The selected is a folder.');
   } else {
-    win.loadURL(url.format({
-      pathname: path.join(__dirname, 'restoring.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
+    win.loadFile(path.join(__dirname, 'restoring.html'));
     rmdir(configdir, (err, dirs, files) => {
       mkdir(configdir);
       targz.decompress({
@@ -289,7 +281,7 @@ let restoreData = file => {
           console.log(err);
         } else {
           console.log('Restore done.');
-          win.loadURL(toLoad);
+          loadApp();
         }
       });
     });
