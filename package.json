@@ -55,22 +55,22 @@
   "homepage": "https://gitlab.com/artmosphere/electron#README",
   "dependencies": {
     "auto-launch": "^5.0.5",
-    "bookshelf": "^0.13.3",
+    "bookshelf": "^0.14.2",
     "electron-is-dev": "^1.0.1",
-    "electron-log": "^2.2.17",
-    "electron-updater": "^3.2.2",
+    "electron-log": "^3.0.1",
+    "electron-updater": "^4.0.6",
     "env-paths": "^2.0.0",
-    "knex": "^0.15.2",
+    "knex": "^0.16.3",
     "node-excel-export": "^1.4.4",
-    "node-thermal-printer": "^2.0.0",
+    "node-thermal-printer": "^2.0.1",
     "rmdir": "^1.2.0",
-    "sqlite3": "^4.0.3",
+    "sqlite3": "^4.0.6",
     "targz": "^1.0.1"
   },
   "devDependencies": {
-    "@types/es6-collections": "^0.5.31",
-    "electron": "^3.0.8",
-    "electron-reload": "^1.2.5",
-    "typescript": "^3.1.6"
+    "electron": "^4.0.5",
+    "electron-rebuild": "^1.8.4",
+    "electron-reload": "^1.4.0",
+    "typescript": "^3.3.3"
   }
 }

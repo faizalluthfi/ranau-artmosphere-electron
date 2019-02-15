@@ -1,17 +1,18 @@
 import { app, BrowserWindow, Tray, Menu, ipcMain, dialog, shell} from 'electron';
-import * as url from 'url';
-import * as path from 'path';
-import * as isDev from 'electron-is-dev';
 import { autoUpdater } from 'electron-updater';
-import * as log from 'electron-log';
-import * as AutoLaunch from 'auto-launch';
-import * as fs from 'fs';
-import * as knex from 'knex';
 
-import * as printer from 'node-thermal-printer';
-import * as targz from 'targz';
-import * as rmdir from 'rmdir';
-import * as excel from 'node-excel-export';
+const url = require('url');
+const path = require('path');
+const isDev = require('electron-is-dev');
+const log = require('electron-log');
+const AutoLaunch = require('auto-launch');
+const fs = require('fs');
+const knex = require('knex');
+
+const printer = require('node-thermal-printer');
+const targz = require('targz');
+const rmdir = require('rmdir');
+const excel = require('node-excel-export');
 
 const appdir = __dirname;
 
@@ -23,7 +24,6 @@ let iconPath = path.join(__dirname, 'assets', 'icons', 'png', '256x256.png');
 
 // Debug environment
 let env = process.env;
-console.dir(env);
 console.log(`App path is ${app.getAppPath()}`);
 
 autoUpdater.logger = log;
@@ -31,16 +31,12 @@ autoUpdater.logger['transports'].file.level = 'info';
 
 let printerPort;
 
-printer.init({
-  type: 'epson'
-});
+printer.init({type: 'epson'});
 
 let initPrinter = port => {
   if(port != printerPort) {
     printerPort = port;
-    printer.init({
-      interface: port
-    });
+    printer.init({interface: port});
   }
 };
 
@@ -49,34 +45,25 @@ let printNote = note => {
   printer.cut();
   if(printerPort) {
     printer.execute(err => {
-      if(err) {
-        console.error('Print failed', err);
-      } else {
-        win.webContents.send('print-success');
-        console.log('Print done');
-      }
+      if(err) return console.error('Print failed', err);
+      win.webContents.send('print-success');
+      console.log('Print done');
     });
   } else {
     win.webContents.send('no-printer-port');
   }
 };
 
-ipcMain.on( 'init-printer', ( e, arg ) => {
-  initPrinter(arg);
-});
+ipcMain.on( 'init-printer', (_e, arg) => initPrinter(arg));
 
-ipcMain.on( 'test-printer', ( e, arg ) => {
+ipcMain.on( 'test-printer', (_e, arg ) => {
   let oldPort = printerPort;
   initPrinter(arg.printerPath);
-  if(arg.test) {
-    printNote(arg.test);
-  }
+  if(arg.test) printNote(arg.test);
   initPrinter(oldPort);
 });
 
-ipcMain.on( 'print-note', ( e, arg ) => {
-  printNote(arg);
-});
+ipcMain.on( 'print-note', (_e, arg ) => printNote(arg));
 
 ipcMain.on('print-to-pdf', function (event, args) {
   const win = BrowserWindow.fromWebContents(event.sender)
@@ -92,20 +79,14 @@ ipcMain.on('print-to-pdf', function (event, args) {
     if(filename) {
       // Use default printing options
       win.webContents.printToPDF(args || {}, function (error, data) {
-        if (error) {
-          throw error;
-        }
-        fs.writeFile(filename, data, function (error) {
-          if (error) {
-            throw error;
-          }
+        if (error) throw error;
+        fs.writeFile(filename, data, error => {
+          if (error) throw error;
           shell.openExternal('file://' + filename);
           win.webContents.send('print-to-pdf-success');
         })
       })
-    } else {
-      win.webContents.send('print-to-pdf-success');
-    }
+    } else win.webContents.send('print-to-pdf-success');
   });
 });
 
@@ -113,12 +94,10 @@ let configdir  = app.getPath('appData');
 
 let mkdir = dir => {
   if(fs.existsSync(dir)) {
-    fs.stat(dir, (err, stats) => {
+    fs.stat(dir, (_err, stats) => {
       if(stats.isFile()) app.quit();
     });
-  } else {
-    fs.mkdirSync(dir);
-  }
+  } else fs.mkdirSync(dir);
 }
 const dbfile   = 'db.sqlite3';
 const subpaths = ['com', 'faizalluthfi', 'artmosphere' + (isDev ? '.development' : '')];
@@ -131,9 +110,7 @@ const dbpath = path.join(configdir, dbfile);
 
 const pathname = path.join(__dirname, 'html', 'index.html');
 
-const loadApp = () => {
-  win.loadFile(pathname);
-}
+const loadApp = () => win.loadFile(pathname);
 
 if(isDev) {
   require('electron-reload')(__dirname, {
@@ -150,20 +127,14 @@ if(isDev) {
       name: autoLauncherOptions.name,
       path: env.APPIMAGE
     });
-  } else {
-    autoLauncher = new AutoLaunch(autoLauncherOptions);
-  }
+  } else autoLauncher = new AutoLaunch(autoLauncherOptions);
 
   autoLauncher.isEnabled()
     .then(function(isEnabled){
-      if(isEnabled){
-        return;
-      }
+      if(isEnabled) return;
       autoLauncher.enable();
     })
-    .catch(function(err){
-      // handle error
-    });
+    .catch((err) => console.log(err));
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -204,25 +175,17 @@ let setTrayMenu = (enableHideMenuItem = true) => {
   tray.setContextMenu(Menu.buildFromTemplate([
     {
       label: 'Munculkan Aplikasi',
-      click: () => {
-        showApplication();
-      }
+      click: () => showApplication()
     },
     {
       enabled: enableHideMenuItem,
-      label: 'Sembunyikan Aplikasi', click: function () {
-        hideApplication();
-      }
+      label: 'Sembunyikan Aplikasi', click: () => hideApplication()
     },
     {
-      label: 'Log Aplikasi', click: function () {
-        win.webContents.openDevTools({mode: 'detach'});
-      }
+      label: 'Log Aplikasi', click: () => win.webContents.openDevTools({mode: 'detach'})
     },
     {
-      label: 'Keluar', click: function () {
-        win.webContents.send('quit-application');
-      }
+      label: 'Keluar', click: () => win.webContents.send('quit-application')
     }
   ]));
 }
@@ -266,24 +229,19 @@ let backupData = (file) => {
 };
 
 let restoreData = file => {
-  if(!fs.existsSync(file)) {
-    win.webContents.send('error', 'File does not exist.');
-  } else if(fs.lstatSync(file).isDirectory()) {
-    win.webContents.send('error', 'The selected is a folder.');
-  } else {
+  if(!fs.existsSync(file)) win.webContents.send('error', 'File does not exist.');
+  else if(fs.lstatSync(file).isDirectory()) win.webContents.send('error', 'The selected is a folder.');
+  else {
     win.loadFile(path.join(__dirname, 'restoring.html'));
-    rmdir(configdir, (err, dirs, files) => {
+    rmdir(configdir, (_err, _dirs, _files) => {
       mkdir(configdir);
       targz.decompress({
         src: file,
         dest: configdir
       }, err => {
-        if(err) {
-          console.log(err);
-        } else {
-          console.log('Restore done.');
-          loadApp();
-        }
+        if(err) return console.log(err);
+        console.log('Restore done.');
+        loadApp();
       });
     });
   }
@@ -295,9 +253,7 @@ let createWindow = () => {
 
   let shouldQuit = !makeSingleInstance();
 
-  if (shouldQuit) {
-    return app.quit();
-  }
+  if (shouldQuit) return app.quit();
 
   // and load the index.html of the app.
   loadApp();
@@ -325,9 +281,7 @@ let createWindow = () => {
     });
   });
 
-  ipcMain.on('show-application', (e, arg) => {
-    showApplication();
-  });
+  ipcMain.on('show-application', (e, arg) => showApplication());
   ipcMain.on('quit-application', (e, arg) => {
     app['isQuiting'] = true;
     app.quit();
@@ -338,17 +292,11 @@ let createWindow = () => {
   });
 
   // On backup and restore
-  ipcMain.on( 'backup', ( e, options ) => {
-    backupData(options);
-  });
-  ipcMain.on('restore', (e, file) => {
-    restoreData(file);
-  });
+  ipcMain.on( 'backup', ( e, options ) => backupData(options));
+  ipcMain.on('restore', (e, file) => restoreData(file));
 
   // Open the DevTools if the current environment is development.
-  if(isDev) {
-    win.webContents.openDevTools()
-  }
+  if(isDev) win.webContents.openDevTools();
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -356,7 +304,7 @@ let createWindow = () => {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     nullifyWindow();
-  })
+  });
 }
 
 let createBrowserWindow = () => {
@@ -395,11 +343,8 @@ let createBrowserWindow = () => {
     tray = new Tray(iconPath);
     tray.setToolTip(packageJson.productName);
     tray.on('click', event => {
-      if (win.isVisible() && win.isFocused()) {
-        hideApplication();
-      } else {
-        showApplication();
-      }
+      if (win.isVisible() && win.isFocused()) hideApplication();
+      else showApplication();
     });
     setTrayMenu();
   });
@@ -414,19 +359,13 @@ app.on('ready', migrateDatabase);
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (win === null) {
-    createWindow();
-  }
+  if (win === null) createWindow();
 });
 
-app.on('before-quit', () => {
-  tray.destroy();
-});
+app.on('before-quit', () => tray.destroy());
