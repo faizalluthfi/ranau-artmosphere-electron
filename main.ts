@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu, ipcMain, dialog, shell} from 'electron';
+import { app, BrowserWindow, Tray, Menu, ipcMain, dialog, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
 const url = require('url');
@@ -31,21 +31,21 @@ autoUpdater.logger['transports'].file.level = 'info';
 
 let printerPort;
 
-printer.init({type: 'epson'});
+printer.init({ type: 'epson' });
 
 let initPrinter = port => {
-  if(port != printerPort) {
+  if (port != printerPort) {
     printerPort = port;
-    printer.init({interface: port});
+    printer.init({ interface: port });
   }
 };
 
 let printNote = note => {
   printer.println(note);
   printer.cut();
-  if(printerPort) {
+  if (printerPort) {
     printer.execute(err => {
-      if(err) return console.error('Print failed', err);
+      if (err) return console.error('Print failed', err);
       win.webContents.send('print-success');
       console.log('Print done');
     });
@@ -54,18 +54,18 @@ let printNote = note => {
   }
 };
 
-ipcMain.on( 'init-printer', (_e, arg) => initPrinter(arg));
+ipcMain.on('init-printer', (_e, arg) => initPrinter(arg));
 
-ipcMain.on( 'test-printer', (_e, arg ) => {
+ipcMain.on('test-printer', (_e, arg) => {
   let oldPort = printerPort;
   initPrinter(arg.printerPath);
-  if(arg.test) printNote(arg.test);
+  if (arg.test) printNote(arg.test);
   initPrinter(oldPort);
 });
 
-ipcMain.on( 'print-note', (_e, arg ) => printNote(arg));
+ipcMain.on('print-note', (_e, arg) => printNote(arg));
 
-ipcMain.on('print-to-pdf', function (event, args) {
+ipcMain.on('print-to-pdf', (event, args) => {
   const win = BrowserWindow.fromWebContents(event.sender)
   dialog.showSaveDialog(win, {
     title: 'Save PDF',
@@ -76,9 +76,9 @@ ipcMain.on('print-to-pdf', function (event, args) {
       }
     ]
   }, filename => {
-    if(filename) {
+    if (filename) {
       // Use default printing options
-      win.webContents.printToPDF(args || {}, function (error, data) {
+      win.webContents.printToPDF(args || {}, (error, data) => {
         if (error) throw error;
         fs.writeFile(filename, data, error => {
           if (error) throw error;
@@ -90,16 +90,16 @@ ipcMain.on('print-to-pdf', function (event, args) {
   });
 });
 
-let configdir  = app.getPath('appData');
+let configdir = app.getPath('appData');
 
 let mkdir = dir => {
-  if(fs.existsSync(dir)) {
+  if (fs.existsSync(dir)) {
     fs.stat(dir, (_err, stats) => {
-      if(stats.isFile()) app.quit();
+      if (stats.isFile()) app.quit();
     });
   } else fs.mkdirSync(dir);
 }
-const dbfile   = 'db.sqlite3';
+const dbfile = 'db.sqlite3';
 const subpaths = ['com', 'faizalluthfi', 'artmosphere' + (isDev ? '.development' : '')];
 subpaths.forEach(p => {
   configdir = path.join(configdir, p);
@@ -112,7 +112,7 @@ const pathname = path.join(__dirname, 'html', 'index.html');
 
 const loadApp = () => win.loadFile(pathname);
 
-if(isDev) {
+if (isDev) {
   require('electron-reload')(__dirname, {
     electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
     ignored: /node_modules|angular|[\/\\]\./,
@@ -130,8 +130,8 @@ if(isDev) {
   } else autoLauncher = new AutoLaunch(autoLauncherOptions);
 
   autoLauncher.isEnabled()
-    .then(function(isEnabled){
-      if(isEnabled) return;
+    .then(isEnabled => {
+      if (isEnabled) return;
       autoLauncher.enable();
     })
     .catch((err) => console.log(err));
@@ -182,7 +182,7 @@ let setTrayMenu = (enableHideMenuItem = true) => {
       label: 'Sembunyikan Aplikasi', click: () => hideApplication()
     },
     {
-      label: 'Log Aplikasi', click: () => win.webContents.openDevTools({mode: 'detach'})
+      label: 'Log Aplikasi', click: () => win.webContents.openDevTools({ mode: 'detach' })
     },
     {
       label: 'Keluar', click: () => win.webContents.send('quit-application')
@@ -207,7 +207,7 @@ const knexConfig = {
 let migrateDatabase = () => {
   let k = knex(knexConfig);
   k.migrate.latest()
-    .then(function() {
+    .then(() => {
       k.seed.run();
       createWindow();
     });
@@ -218,7 +218,7 @@ let backupData = (file) => {
     src: configdir,
     dest: file
   }, err => {
-    if(err) {
+    if (err) {
       win.webContents.send('error', 'Backup failed.');
       console.log(err);
     } else {
@@ -229,8 +229,8 @@ let backupData = (file) => {
 };
 
 let restoreData = file => {
-  if(!fs.existsSync(file)) win.webContents.send('error', 'File does not exist.');
-  else if(fs.lstatSync(file).isDirectory()) win.webContents.send('error', 'The selected is a folder.');
+  if (!fs.existsSync(file)) win.webContents.send('error', 'File does not exist.');
+  else if (fs.lstatSync(file).isDirectory()) win.webContents.send('error', 'The selected is a folder.');
   else {
     win.loadFile(path.join(__dirname, 'restoring.html'));
     rmdir(configdir, (_err, _dirs, _files) => {
@@ -239,7 +239,7 @@ let restoreData = file => {
         src: file,
         dest: configdir
       }, err => {
-        if(err) return console.log(err);
+        if (err) return console.log(err);
         console.log('Restore done.');
         loadApp();
       });
@@ -269,7 +269,7 @@ let createWindow = () => {
         }
       ]
     }, filename => {
-      if(filename) {
+      if (filename) {
         const excelExport = excel.buildExport([
           JSON.parse(args)
         ]);
@@ -292,11 +292,11 @@ let createWindow = () => {
   });
 
   // On backup and restore
-  ipcMain.on( 'backup', ( e, options ) => backupData(options));
+  ipcMain.on('backup', (e, options) => backupData(options));
   ipcMain.on('restore', (e, file) => restoreData(file));
 
   // Open the DevTools if the current environment is development.
-  if(isDev) win.webContents.openDevTools();
+  if (isDev) win.webContents.openDevTools();
 
   // Emitted when the window is closed.
   win.on('closed', () => {
