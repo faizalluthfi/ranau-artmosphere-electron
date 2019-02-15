@@ -40,9 +40,6 @@ build:
   only:
     - master
 buildforwindows:
-  cache:
-    paths:
-      - node_modules/
   stage: build
   dependencies:
     - html
