@@ -11,7 +11,6 @@ html:
   tags:
     - docker
   script:
-    - node -v
     - cd angular
     - if [ -z ${PULL_LATEST_ANGULAR_SUBMODULE+x} ]; then echo 'Already pulled fixed version of angular submodule.'; else git pull origin master; fi
     - npm install
@@ -23,14 +22,13 @@ html:
     - master
 
 build:
-  image: electronuserland/builder:wine-05.18
+  image: electronuserland/builder
   stage: build
   dependencies:
     - html
   tags:
     - docker
   script:
-    - node -v
     - npm install
     - npm run build
     - ls -la dist/
@@ -43,7 +41,6 @@ build:
     - master
 buildforwindows:
   cache:
-    key: "$CI_JOB_ID"
     paths:
       - node_modules/
   stage: build
@@ -57,7 +54,6 @@ buildforwindows:
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/.bin
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/windows-build-tools/node_modules/.bin
     - PATH=$PATH:/cygdrive/c/Users/$(whoami)/.windows-build-tools/python27
-    - node -v
     - npm install
     - npm run buildforwindows
     - ls -la dist/
