@@ -23,7 +23,7 @@ html:
     - master
 
 build:
-  image: electronuserland/builder:wine
+  image: electronuserland/builder:wine-05.18
   stage: build
   dependencies:
     - html
@@ -42,7 +42,6 @@ build:
   only:
     - master
 buildforwindows:
-  image: electronuserland/builder:wine
   cache:
     key: "$CI_JOB_ID"
     paths:
