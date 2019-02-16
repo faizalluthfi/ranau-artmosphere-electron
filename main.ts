@@ -115,7 +115,7 @@ const loadApp = () => win.loadFile(pathname);
 if (isDev) {
   require('electron-reload')(__dirname, {
     electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
-    ignored: /node_modules|angular|[\/\\]\./,
+    ignored: /node_modules|angular|version.js|[\/\\]\./,
   });
 } else {
   let autoLauncher;

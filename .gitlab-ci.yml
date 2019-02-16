@@ -65,6 +65,7 @@ pages:
   stage: deploy
   script:
     - mv dist-linux/* dist/
+    - sed -i "s/version/$(node version.js)/" ./dist/index.html
     - mv dist public
   dependencies:
     - build

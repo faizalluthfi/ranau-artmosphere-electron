@@ -2,6 +2,7 @@ node_modules
 dist/*
 !dist/index.html
 *.js
+!version.js
 !knexfile.js
 !migrations/*.js
 !seeds/*.js
