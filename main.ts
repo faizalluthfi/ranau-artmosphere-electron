@@ -325,29 +325,28 @@ let createBrowserWindow = () => {
   global['knexConfig'] = knexConfig;
   global['packageJson'] = packageJson;
 
+  // Do not quit application by closing window
+  win.on('close', event => {
+    if (!(app['isQuiting'] || isDev)) {
+      event.preventDefault();
+      hideApplication();
+      return false;
+    }
+    return true;
+  });
+
   win.once('ready-to-show', () => {
     win.show();
     win.maximize();
-
-    // Do not quit application by closing window
-    win.on('close', event => {
-      if (!(app['isQuiting'] || isDev)) {
-        event.preventDefault();
-        hideApplication();
-        return false;
-      }
-      return true;
-    });
-
-    // Set tray after application is ready to show
-    tray = new Tray(iconPath);
-    tray.setToolTip(packageJson.productName);
-    tray.on('click', event => {
-      if (win.isVisible() && win.isFocused()) hideApplication();
-      else showApplication();
-    });
-    setTrayMenu();
   });
+
+  tray = new Tray(iconPath);
+  tray.setToolTip(packageJson.productName);
+  tray.on('click', event => {
+    if (win.isVisible() && win.isFocused()) hideApplication();
+    else showApplication();
+  });
+  setTrayMenu();
 };
 
 // This method will be called when Electron has finished
