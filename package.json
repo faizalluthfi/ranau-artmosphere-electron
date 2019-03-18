@@ -19,7 +19,7 @@
         "url": "https://artmosphere.gitlab.io/electron/"
       }
     ],
-    "appId": "com.faizalluthfi.kecamatan-lowokwaru",
+    "appId": "com.faizalluthfi.artmosphere",
     "files": [
       "**/*",
       "!dev-app-update.yml",
