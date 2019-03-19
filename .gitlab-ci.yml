@@ -63,6 +63,7 @@ buildforwindows:
 
 pages:
   stage: deploy
+  image: node:latest
   script:
     - mv dist-linux/* dist/
     - sed -i "s/version/$(node version.js)/" ./dist/index.html
