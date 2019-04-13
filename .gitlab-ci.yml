@@ -12,6 +12,7 @@ pages:
     - wget https://artmosphere.gitlab.io/electron/artmosphere_setup_0.0.15.exe.blockmap
     - wget https://artmosphere.gitlab.io/electron/latest-linux.yml
     - wget https://artmosphere.gitlab.io/electron/latest.yml
+    - cd ..
     - sed -i "s/version/$(node version.js)/" ./dist/index.html
     - cp dist/index.html public/
   artifacts:
