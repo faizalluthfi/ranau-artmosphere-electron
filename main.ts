@@ -30,6 +30,8 @@ autoUpdater.logger = log;
 autoUpdater.logger['transports'].file.level = 'info';
 
 let printerPort;
+let backupPath;
+let defaultBackupPath = path.join(app.getPath('documents'), `${packageJson.name}-backup`);
 
 printer.init({ type: 'epson' });
 
@@ -213,19 +215,41 @@ let migrateDatabase = () => {
     });
 };
 
-let backupData = (file) => {
-  targz.compress({
-    src: configdir,
-    dest: file
-  }, err => {
-    if (err) {
-      win.webContents.send('error', 'Backup failed.');
-      console.log(err);
+let backupData = async options => {
+  let filename;
+  if(options.file) {
+    filename = options.file;
+  } else {
+    let dir;
+    if(options.dir) {
+      dir = options.dir;
     } else {
-      win.webContents.send('backup-succeed', file);
-      console.log('Backup succeed.');
+      dir = defaultBackupPath;
+      mkdir(dir);
     }
-  });
+    let now = new Date();
+    filename = path.join(
+      dir,
+      `pos_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.${backupExtension}`
+    );
+  }
+  const func = filename => {
+    return new Promise(resolve => {
+      targz.compress({
+        src: configdir,
+        dest: filename
+      }, err => resolve(err));
+    });
+  }
+  const err = await func(filename);
+  if (err) {
+    console.log(err);
+    if (win) win.webContents.send('error', 'Backup failed.');
+    else dialog.showErrorBox('Backup Otomatis Error', JSON.stringify(err));
+  } else {
+    if (win) win.webContents.send('backup-succeed', filename);
+    console.log('Backup succeed.');
+  }
 };
 
 let restoreData = file => {
@@ -292,7 +316,7 @@ let createWindow = () => {
   });
 
   // On backup and restore
-  ipcMain.on('backup', (e, options) => backupData(options));
+  ipcMain.on('backup', (e, file) => backupData({file}));
   ipcMain.on('restore', (e, file) => restoreData(file));
 
   // Open the DevTools if the current environment is development.
@@ -367,4 +391,7 @@ app.on('activate', () => {
   if (win === null) createWindow();
 });
 
-app.on('before-quit', () => tray.destroy());
+app.on('before-quit', () => {
+  tray.destroy();
+  backupData({dir: backupPath});
+});
