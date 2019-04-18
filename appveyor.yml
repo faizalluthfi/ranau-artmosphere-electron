@@ -12,9 +12,16 @@ init:
 
 install:
   - ps: Install-Product node 10 x64
+  - git submodule -q update --init --recursive
   - npm install
+  - cd angular
+  - npm install
+  - cd ..
 
 build_script:
+  - cd angular
+  - npx ng build --prod --output-path ../html
+  - cd ..
   - npm run buildforwindows
 
 test: off
