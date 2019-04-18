@@ -13,10 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
-    "publish": {
-      "provider": "github",
-      "repo": "ranau-artmosphere/electron"
-    },
+    "publish": ["github"],
     "appId": "com.faizalluthfi.artmosphere",
     "files": [
       "**/*",
@@ -42,8 +39,8 @@
     }
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/artmosphere/electron.git"
+    "type": "github",
+    "url": "git+https://github.com/ranau-artmosphere/electron.git"
   },
   "author": "Faizal Luthfi <zalluth@gmail.com>",
   "license": "ISC",
