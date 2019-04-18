@@ -13,7 +13,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
-    "publish": ["github"],
+    "publish": [{
+      "provier": "github",
+      "repo": "ranau-artmosphere/electron"
+    }],
     "appId": "com.faizalluthfi.artmosphere",
     "files": [
       "**/*",
