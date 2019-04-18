@@ -33,6 +33,11 @@ build:
     - npm run build
     - ls -la dist/
     - rm -rf dist/*unpacked
+    - cd dist
+    - wget https://github.com/ranau-artmosphere/electron/releases/download/v0.0.16/artmosphere_setup_0.0.16.exe
+    - wget https://github.com/ranau-artmosphere/electron/releases/download/v0.0.16/artmosphere_setup_0.0.16.exe.blockmap
+    - wget https://github.com/ranau-artmosphere/electron/releases/download/v0.0.16/latest.yml
+    - cd ..
   artifacts:
     paths:
        - dist/
