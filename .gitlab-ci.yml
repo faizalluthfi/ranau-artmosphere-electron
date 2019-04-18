@@ -33,28 +33,7 @@ build:
     - npm run build
     - ls -la dist/
     - rm -rf dist/*unpacked
-    - mv dist dist-linux
-  artifacts:
-    paths:
-       - dist-linux/
-  only:
-    - master
-buildforwindows:
-  stage: build
-  dependencies:
-    - html
-  tags:
-    - windows
-  script:
-    - PATH=$PATH:/cygdrive/c/Program\ Files/nodejs/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin
-    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm
-    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/.bin
-    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/AppData/Roaming/npm/node_modules/windows-build-tools/node_modules/.bin
-    - PATH=$PATH:/cygdrive/c/Users/$(whoami)/.windows-build-tools/python27
-    - npm install
-    - npm run buildforwindows
-    - ls -la dist/
-    - rm -rf dist/*unpacked
+    - mv dist
   artifacts:
     paths:
        - dist/
@@ -65,12 +44,10 @@ pages:
   stage: deploy
   image: node:latest
   script:
-    - mv dist-linux/* dist/
     - sed -i "s/version/$(node version.js)/" ./dist/index.html
     - mv dist public
   dependencies:
     - build
-    - buildforwindows
   artifacts:
     paths:
       - public
