@@ -14,7 +14,7 @@
   },
   "build": {
     "publish": {
-      "provier": "github",
+      "provider": "github",
       "repo": "ranau-artmosphere/electron"
     },
     "appId": "com.faizalluthfi.artmosphere",
