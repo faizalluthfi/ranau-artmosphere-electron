@@ -12,8 +12,11 @@ cache:
 init:
   - git config --global core.autocrlf input
 
+environment:
+  nodejs_version: 10.15.0
 install:
-  - ps: Install-Product node 10 x64
+  - ps: Install-Product node $env:nodejs_version x64
+  - sh: nvm install $nodejs_version
   - git submodule -q update --init --recursive
   - npm install
   - cd angular
