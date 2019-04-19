@@ -15,7 +15,7 @@ init:
 environment:
   nodejs_version: 10.15.0
 install:
-  - ps: Install-Product node $env:nodejs_version x64
+  - cmd: powershell Install-Product node $env:nodejs_version x64
   - sh: nvm install $nodejs_version
   - git submodule -q update --init --recursive
   - npm install
