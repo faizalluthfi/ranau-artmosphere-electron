@@ -56,6 +56,8 @@ let printNote = note => {
   }
 };
 
+ipcMain.on('set-default-backup-path', (_e, arg) => defaultBackupPath = arg);
+
 ipcMain.on('init-printer', (_e, arg) => initPrinter(arg));
 
 ipcMain.on('test-printer', (_e, arg) => {
@@ -348,6 +350,7 @@ let createBrowserWindow = () => {
   global['dbpath'] = dbpath;
   global['knexConfig'] = knexConfig;
   global['packageJson'] = packageJson;
+  global['defaultBackupPath'] = defaultBackupPath;
 
   // Do not quit application by closing window
   win.on('close', event => {

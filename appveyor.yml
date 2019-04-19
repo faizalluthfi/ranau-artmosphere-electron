@@ -1,4 +1,6 @@
-image: Visual Studio 2017
+image:
+  - Visual Studio 2017
+  - Ubuntu
 
 platform:
   - x64
@@ -22,10 +24,7 @@ build_script:
   - cd angular
   - npx ng build --prod --output-path ../html
   - cd ..
-  - npm run buildforwindows
+  - cmd: npm run buildforwindows
+  - sh: npm run build
 
 test: off
-
-artifacts:
-  - path: dist/*.exe
-  - path: dist/latest.yml
