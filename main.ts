@@ -30,7 +30,6 @@ autoUpdater.logger = log;
 autoUpdater.logger['transports'].file.level = 'info';
 
 let printerPort;
-let backupPath;
 let defaultBackupPath = path.join(app.getPath('documents'), `${packageJson.name}-backup`);
 
 printer.init({ type: 'epson' });
@@ -217,21 +216,12 @@ let migrateDatabase = () => {
     });
 };
 
-let backupData = async options => {
-  let filename;
-  if(options.file) {
-    filename = options.file;
-  } else {
-    let dir;
-    if(options.dir) {
-      dir = options.dir;
-    } else {
-      dir = defaultBackupPath;
-      mkdir(dir);
-    }
+let backupData = async (filename = null) => {
+  if (!filename) {
+    mkdir(defaultBackupPath);
     let now = new Date();
     filename = path.join(
-      dir,
+      defaultBackupPath,
       `pos_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.${backupExtension}`
     );
   }
@@ -318,14 +308,14 @@ let createWindow = () => {
   });
 
   // On backup and restore
-  ipcMain.on('backup', (e, file) => backupData({file}));
+  ipcMain.on('backup', (e, file) => backupData(file));
   ipcMain.on('restore', (e, file) => restoreData(file));
 
   // Open the DevTools if the current environment is development.
   if (isDev) win.webContents.openDevTools();
 
   win.on('closed', () => nullifyWindow());
-  win.on('session-end', () => backupData({dir: backupPath}));
+  win.on('session-end', () => backupData());
 }
 
 let createBrowserWindow = () => {
@@ -391,5 +381,5 @@ app.on('activate', () => {
 
 app.on('before-quit', () => {
   tray.destroy();
-  backupData({dir: backupPath});
+  backupData();
 });
