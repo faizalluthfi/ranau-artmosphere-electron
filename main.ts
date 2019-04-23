@@ -137,7 +137,7 @@ if (isDev) {
       if (isEnabled) return;
       autoLauncher.enable();
     })
-    .catch((err) => console.log(err));
+    .catch(err => console.log(err));
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -160,9 +160,7 @@ let makeSingleInstance = () => {
   return app.requestSingleInstanceLock();
 }
 
-let nullifyWindow = () => {
-  win = null;
-};
+let nullifyWindow = () => win = null;
 
 let hideApplication = () => {
   win.hide();
@@ -178,11 +176,11 @@ let setTrayMenu = (enableHideMenuItem = true) => {
   tray.setContextMenu(Menu.buildFromTemplate([
     {
       label: 'Munculkan Aplikasi',
-      click: () => showApplication()
+      click: showApplication
     },
     {
       enabled: enableHideMenuItem,
-      label: 'Sembunyikan Aplikasi', click: () => hideApplication()
+      label: 'Sembunyikan Aplikasi', click: hideApplication
     },
     {
       label: 'Log Aplikasi', click: () => win.webContents.openDevTools({ mode: 'detach' })
@@ -216,6 +214,15 @@ let migrateDatabase = () => {
     });
 };
 
+const compressBackup = filename => {
+  return new Promise(resolve => {
+    targz.compress({
+      src: configdir,
+      dest: filename
+    }, err => resolve(err));
+  });
+};
+
 let backupData = async (filename = null) => {
   if (!filename) {
     mkdir(defaultBackupPath);
@@ -225,15 +232,7 @@ let backupData = async (filename = null) => {
       `pos_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.${backupExtension}`
     );
   }
-  const func = filename => {
-    return new Promise(resolve => {
-      targz.compress({
-        src: configdir,
-        dest: filename
-      }, err => resolve(err));
-    });
-  }
-  const err = await func(filename);
+  const err = await compressBackup(filename);
   if (err) {
     console.log(err);
     if (win) win.webContents.send('error', 'Backup failed.');
@@ -314,8 +313,8 @@ let createWindow = () => {
   // Open the DevTools if the current environment is development.
   if (isDev) win.webContents.openDevTools();
 
-  win.on('closed', () => nullifyWindow());
-  win.on('session-end', () => backupData());
+  win.on('closed', nullifyWindow);
+  win.on('session-end', backupData);
 }
 
 let createBrowserWindow = () => {
