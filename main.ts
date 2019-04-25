@@ -11,12 +11,13 @@ const knex = require('knex');
 
 const printer = require('node-thermal-printer');
 const targz = require('targz');
+const tar = require('tar');
 const rmdir = require('rmdir');
 const excel = require('node-excel-export');
 
 const appdir = __dirname;
 
-const backupExtension = 'artmosphere.backup';
+const backupExtension = '.artmosphere.backup';
 
 let packageJson = require('./package.json');
 
@@ -214,33 +215,28 @@ let migrateDatabase = () => {
     });
 };
 
-const compressBackup = filename => {
-  return new Promise(resolve => {
-    targz.compress({
-      src: configdir,
-      dest: filename
-    }, err => resolve(err));
-  });
-};
-
 let backupData = async (filename = null) => {
   if (!filename) {
     mkdir(defaultBackupPath);
     let now = new Date();
     filename = path.join(
       defaultBackupPath,
-      `pos_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.${backupExtension}`
+      `pos_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}${backupExtension}`
     );
   }
-  const err = await compressBackup(filename);
-  if (err) {
-    console.log(err);
-    if (win) win.webContents.send('error', 'Backup failed.');
-    else dialog.showErrorBox('Backup Otomatis Error', JSON.stringify(err));
-  } else {
-    if (win) win.webContents.send('backup-succeed', filename);
-    console.log('Backup succeed.');
-  }
+  tar.c({
+    gzip: false,
+    C: configdir,
+    file: filename,
+    sync: true,
+    onwarn: (message, data) => {
+      console.log(message);
+      if (win) win.webContents.send('error', 'Pencadangan data gagal.');
+      else dialog.showErrorBox('Backup Otomatis Error', JSON.stringify(message));
+    }
+  }, [dbfile]);
+  if (win) win.webContents.send('backup-succeed', filename);
+  console.log('Backup succeed.');
 };
 
 let restoreData = file => {
@@ -250,14 +246,33 @@ let restoreData = file => {
     win.loadFile(path.join(__dirname, 'restoring.html'));
     rmdir(configdir, (_err, _dirs, _files) => {
       mkdir(configdir);
-      targz.decompress({
-        src: file,
-        dest: configdir
-      }, err => {
-        if (err) return console.log(err);
+
+      if (path.extname(file) == backupExtension) {
+        targz.decompress({
+          src: file,
+          dest: configdir
+        }, err => {
+          if (err) {
+            win.webContents.send('error', 'Pengembalian data gagal.');
+            return console.log(err);
+          }
+          console.log('Restore done.');
+          loadApp();
+        });
+      } else {
+        tar.x({
+          file,
+          cwd: configdir,
+          sync: true,
+          onwarn: (message, data) => {
+            win.webContents.send('error', 'Pengembalian data gagal.');
+            console.log(message);
+          }
+        });
         console.log('Restore done.');
         loadApp();
-      });
+      }
+
     });
   }
 };
@@ -329,7 +344,7 @@ let createBrowserWindow = () => {
   global['app'] = app;
   global['win'] = win;
   global['appdir'] = appdir;
-  global['backupExtension'] = backupExtension;
+  global['backupExtension'] = 'tar';
   global['dialog'] = dialog;
   global['dbpath'] = dbpath;
   global['knexConfig'] = knexConfig;
