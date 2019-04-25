@@ -253,7 +253,7 @@ let restoreData = file => {
           dest: configdir
         }, err => {
           if (err) {
-            win.webContents.send('error', 'Pengembalian data gagal.');
+            dialog.showErrorBox('Error', 'Pengembalian data gagal');
             return console.log(err);
           }
           console.log('Restore done.');
@@ -265,7 +265,7 @@ let restoreData = file => {
           cwd: configdir,
           sync: true,
           onwarn: (message, data) => {
-            win.webContents.send('error', 'Pengembalian data gagal.');
+            dialog.showErrorBox('Error', 'Pengembalian data gagal');
             console.log(message);
           }
         });
