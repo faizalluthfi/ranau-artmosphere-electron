@@ -215,13 +215,13 @@ let migrateDatabase = () => {
     });
 };
 
-let backupData = async (filename = null) => {
+let backupData = (filename = null) => {
   if (!filename) {
     mkdir(defaultBackupPath);
     let now = new Date();
     filename = path.join(
       defaultBackupPath,
-      `pos_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}${backupExtension}`
+      `pos_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.tar`
     );
   }
   tar.c({
