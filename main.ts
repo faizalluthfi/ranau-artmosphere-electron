@@ -9,7 +9,8 @@ import * as AutoLaunch from 'auto-launch';
 import * as fs from 'fs';
 import * as knex from 'knex';
 
-const printer = require('node-thermal-printer');
+const ThermalPrinter = require('node-thermal-printer').printer;
+const PrinterTypes = require('node-thermal-printer').types;
 import * as targz from 'targz';
 import * as tar from 'tar';
 import * as rmdir from 'rmdir';
@@ -33,12 +34,15 @@ autoUpdater.logger['transports'].file.level = 'info';
 let printerPort;
 let defaultBackupPath = path.join(app.getPath('documents'), `${packageJson.name}-backup`);
 
-printer.init({ type: 'epson' });
+let printer = new ThermalPrinter({ type: PrinterTypes.EPSON });
 
 let initPrinter = port => {
   if (port != printerPort) {
     printerPort = port;
-    printer.init({ interface: port });
+    printer = new ThermalPrinter({
+      type: PrinterTypes.EPSON,
+      interface: port
+    });
   }
 };
 
@@ -333,7 +337,15 @@ let createWindow = () => {
 }
 
 let createBrowserWindow = () => {
-  win = new BrowserWindow({ width: 800, height: 600, icon: iconPath, show: false })
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    icon: iconPath,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
 
   // Global variables
   global['autoUpdater'] = autoUpdater;
