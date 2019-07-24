@@ -1,7 +1,7 @@
 {
   "name": "artmosphere",
   "productName": "ArtMosphere",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -52,22 +52,22 @@
   "homepage": "https://gitlab.com/artmosphere/electron#README",
   "dependencies": {
     "auto-launch": "^5.0.5",
-    "bookshelf": "^0.14.2",
-    "electron-is-dev": "^1.0.1",
-    "electron-log": "^3.0.1",
-    "electron-updater": "^4.0.6",
-    "env-paths": "^2.0.0",
-    "knex": "^0.16.3",
+    "bookshelf": "^0.15.1",
+    "electron-is-dev": "^1.1.0",
+    "electron-log": "^3.0.6",
+    "electron-updater": "^4.1.2",
+    "env-paths": "^2.2.0",
+    "knex": "^0.19.1",
     "node-excel-export": "^1.4.4",
-    "node-thermal-printer": "^2.0.1",
+    "node-thermal-printer": "^4.1.0",
     "rmdir": "^1.2.0",
-    "sqlite3": "^4.0.6",
-    "tar": "^4.4.8",
+    "sqlite3": "^4.0.9",
+    "tar": "^4.4.10",
     "targz": "^1.0.1"
   },
   "devDependencies": {
-    "electron": "4.0.3",
-    "electron-reload": "^1.4.0",
-    "typescript": "^3.3.3"
+    "electron": "5.0.8",
+    "electron-reload": "^1.4.1",
+    "typescript": "^3.5.3"
   }
 }
