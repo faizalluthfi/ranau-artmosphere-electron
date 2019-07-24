@@ -1,19 +1,19 @@
 import { app, BrowserWindow, Tray, Menu, ipcMain, dialog, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
-const url = require('url');
-const path = require('path');
-const isDev = require('electron-is-dev');
-const log = require('electron-log');
-const AutoLaunch = require('auto-launch');
-const fs = require('fs');
-const knex = require('knex');
+import * as url from 'url';
+import * as path from 'path';
+import * as isDev from 'electron-is-dev';
+import * as log from 'electron-log';
+import * as AutoLaunch from 'auto-launch';
+import * as fs from 'fs';
+import * as knex from 'knex';
 
 const printer = require('node-thermal-printer');
-const targz = require('targz');
-const tar = require('tar');
-const rmdir = require('rmdir');
-const excel = require('node-excel-export');
+import * as targz from 'targz';
+import * as tar from 'tar';
+import * as rmdir from 'rmdir';
+import * as excel from 'node-excel-export';
 
 const appdir = __dirname;
 
