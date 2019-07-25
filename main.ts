@@ -243,6 +243,8 @@ let backupData = (filename = null) => {
   console.log('Backup succeed.');
 };
 
+let handleSessionEnd = _e => backupData();
+
 let restoreData = file => {
   if (!fs.existsSync(file)) win.webContents.send('error', 'File does not exist.');
   else if (fs.lstatSync(file).isDirectory()) win.webContents.send('error', 'The selected is a folder.');
@@ -333,7 +335,7 @@ let createWindow = () => {
   if (isDev) win.webContents.openDevTools();
 
   win.on('closed', nullifyWindow);
-  win.on('session-end', backupData);
+  win.on('session-end', handleSessionEnd);
 }
 
 let createBrowserWindow = () => {
