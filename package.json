@@ -60,7 +60,6 @@
     "knex": "^0.19.1",
     "node-excel-export": "^1.4.4",
     "node-thermal-printer": "^4.1.0",
-    "rmdir": "^1.2.0",
     "sqlite3": "^4.0.9",
     "tar": "^4.4.10",
     "targz": "^1.0.1"

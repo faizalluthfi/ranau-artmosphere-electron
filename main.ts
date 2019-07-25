@@ -13,7 +13,6 @@ const ThermalPrinter = require('node-thermal-printer').printer;
 const PrinterTypes = require('node-thermal-printer').types;
 import * as targz from 'targz';
 import * as tar from 'tar';
-import * as rmdir from 'rmdir';
 import * as excel from 'node-excel-export';
 
 const appdir = __dirname;
@@ -250,7 +249,7 @@ let restoreData = file => {
   else if (fs.lstatSync(file).isDirectory()) win.webContents.send('error', 'The selected is a folder.');
   else {
     win.loadFile(path.join(__dirname, 'restoring.html'));
-    rmdir(configdir, (_err, _dirs, _files) => {
+    fs.rmdir(configdir, _err => {
       mkdir(configdir);
 
       if (path.extname(file) == backupExtension) {
@@ -278,7 +277,6 @@ let restoreData = file => {
         console.log('Restore done.');
         loadApp();
       }
-
     });
   }
 };
