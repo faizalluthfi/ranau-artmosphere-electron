@@ -50,11 +50,13 @@ let printNote = note => {
   printer.println(note);
   printer.cut();
   if (printerPort) {
-    printer.execute(err => {
-      if (err) return console.error('Print failed', err);
+    try {
+      printer.execute();
       win.webContents.send('print-success');
       console.log('Print done');
-    });
+    } catch (error) {
+      console.log('Print failed');
+    }
   } else {
     win.webContents.send('no-printer-port');
   }
