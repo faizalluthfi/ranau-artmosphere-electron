@@ -46,6 +46,7 @@ let initPrinter = port => {
 };
 
 let printNote = note => {
+  printer.clear();
   printer.println(note);
   printer.cut();
   if (printerPort) {
